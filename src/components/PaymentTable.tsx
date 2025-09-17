@@ -1,20 +1,35 @@
 import type { Payment } from "../types/payment";
-import { Table, TableHead, TableRow, TableCell, TableBody, Pagination, TextField } from "@mui/material";
+import { Table, TableHead, TableRow, TableCell, TableBody, Pagination, TextField, Radio } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from "@mui/material/InputAdornment";
 
 interface Props {
     payments: Payment[];
+    selectedPaymentId: number | null;
+    onSelectPayment: (id: number) => void;
 }
 
-export const PaymentTable: React.FC<Props> = ({ payments }) => {
+export const PaymentTable: React.FC<Props> = ({ payments, selectedPaymentId, onSelectPayment }) => {
     return (
         <div>
             <div className="filters">
-                <TextField label="Поиск по заказчику" size="small" />
+                <TextField
+                    label="Поиск по заказчику"
+                    size="small"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon />
+                            </InputAdornment>
+                        )
+                    }}
+                />
             </div>
 
             <Table>
                 <TableHead>
                     <TableRow>
+                        <TableCell></TableCell>
                         <TableCell>№</TableCell>
                         <TableCell>Дата</TableCell>
                         <TableCell>Тип</TableCell>
@@ -30,7 +45,18 @@ export const PaymentTable: React.FC<Props> = ({ payments }) => {
                 </TableHead>
                 <TableBody>
                     {payments.map((p) => (
-                        <TableRow key={p.id}>
+                        <TableRow
+                            key={p.id}
+                            hover
+                            selected={selectedPaymentId === p.id}
+                            onClick={() => onSelectPayment(p.id)}
+                        >
+                            <TableCell>
+                                <Radio
+                                    checked={selectedPaymentId === p.id}
+                                    onChange={() => onSelectPayment(p.id)}
+                                />
+                            </TableCell>
                             <TableCell>{p.id}</TableCell>
                             <TableCell>{p.createdAt}</TableCell>
                             <TableCell>{p.type}</TableCell>
@@ -46,7 +72,7 @@ export const PaymentTable: React.FC<Props> = ({ payments }) => {
                     ))}
                 </TableBody>
             </Table>
-            <br></br>
+            <br />
             <Pagination count={10} page={1} />
         </div>
     );

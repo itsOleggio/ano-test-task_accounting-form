@@ -1,40 +1,49 @@
-import {useForm, Controller} from "react-hook-form";
-import {TextField, Button} from "@mui/material";
+import React from "react";
+import { Button, Alert } from "@mui/material";
+import type { Payment } from "../types/payment";
+import type { Invoice } from "../types/invoice";
 
-interface MatchFormData {
-    paymentId: number;
-    invoiceId: number;
+interface Props {
+    selectedPayment: Payment | null;
+    selectedInvoices: Invoice[];
+    onMatch: (payment: Payment, invoices: Invoice[]) => void;
 }
 
-export const MatchForm = () => {
-    const {handleSubmit, control} = useForm<MatchFormData>();
+export const MatchForm: React.FC<Props> = ({ selectedPayment, selectedInvoices, onMatch }) => {
+    const [error, setError] = React.useState<string | null>(null);
 
-    const onSubmit = (data: MatchFormData) => {
-        console.log("Сопоставление:", data);
+    const handleMatch = () => {
+        if (!selectedPayment || selectedInvoices.length === 0) {
+            setError("Нужно выбрать хотя бы один платёж и один счёт");
+            return;
+        }
+
+        const total = selectedInvoices.reduce((sum, i) => sum + i.amount, 0);
+        if (total !== selectedPayment.amount) {
+            setError("Сумма счетов не совпадает с суммой платежа");
+            return;
+        }
+
+        if (!selectedInvoices.every(i => i.customerInn === selectedPayment.customerInn)) {
+            setError("ИНН заказчика не совпадает");
+            return;
+        }
+
+        setError(null);
+        onMatch(selectedPayment, selectedInvoices);
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}
-              style={{padding: "16px", border: "1px solid #ccc", borderRadius: "8px"}}>
-            <Controller
-                name="paymentId"
-                control={control}
-                render={({field}) => (
-                    <TextField {...field} label="ID платежа" type="number" fullWidth margin="normal"/>
-                )}
-            />
-
-            <Controller
-                name="invoiceId"
-                control={control}
-                render={({field}) => (
-                    <TextField {...field} label="ID счета" type="number" fullWidth margin="normal"/>
-                )}
-            />
-
-            <Button variant="contained" type="submit" fullWidth>
-                Сопоставить
+        <div>
+            {error && <Alert severity="error">{error}</Alert>}
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleMatch}
+                disabled={!selectedPayment || selectedInvoices.length === 0}
+            >
+                СОПОСТАВИТЬ
             </Button>
-        </form>
+        </div>
     );
 };
