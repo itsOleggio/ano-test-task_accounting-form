@@ -1,52 +1,10 @@
 import React from "react";
 import { PaymentTable, InvoiceTable, MatchForm } from "../components/";
+import { mockPayments, mockInvoices } from "../constants";
 import type { Payment } from "../types/payment";
 import type { Invoice } from "../types/invoice";
 import styles from "../style/App.module.css";
 import { Paper, Typography } from "@mui/material";
-
-const mockPayments: Payment[] = [
-    {
-        id: 1,
-        createdAt: "2025-09-17",
-        type: "электронный",
-        amount: 12000,
-        customer: "ООО Ромашка",
-        customerInn: "1234567890",
-        provider: "ИП Иванов",
-        providerInn: "9876543210",
-        studentName: "Петров Петр",
-        paymentComment: "Оплата за экзамен",
-        accountantComment: "",
-    },
-];
-
-const mockInvoices: Invoice[] = [
-    {
-        id: 101,
-        type: "обучение",
-        studentName: "Петров Петр",
-        qualification: "A123456789",
-        amount: 12000,
-        customer: "ООО Ромашка",
-        customerInn: "1234567890",
-        provider: "ИП Иванов",
-        providerInn: "9876543210",
-        purpose: "Обучение по курсу",
-    },
-    {
-        id: 102,
-        type: "пошлина",
-        studentName: "Петров Петр",
-        qualification: "A123456789",
-        amount: 12000,
-        customer: "ООО Ромашка",
-        customerInn: "1234567890",
-        provider: "ИП Иванов",
-        providerInn: "9876543210",
-        purpose: "Пошлина за экзамен",
-    },
-];
 
 function App() {
     const [selectedPaymentId, setSelectedPaymentId] = React.useState<number | null>(null);
