@@ -1,4 +1,5 @@
 import React from "react";
+import { useForm } from "react-hook-form";
 import { Button, Alert, Stack, Typography } from "@mui/material";
 import type { Payment } from "../types/payment";
 import type { Invoice } from "../types/invoice";
@@ -10,32 +11,31 @@ interface Props {
 }
 
 export const MatchForm: React.FC<Props> = ({ selectedPayment, selectedInvoices, onMatch }) => {
-    const [error, setError] = React.useState<string | null>(null);
+    const { handleSubmit, setError, formState: { errors } } = useForm();
 
     const invoicesTotal = selectedInvoices.reduce((sum, i) => sum + i.amount, 0);
     const isSelectionIncomplete = !selectedPayment || selectedInvoices.length === 0;
 
-    const handleMatch = () => {
+    const onSubmit = () => {
         if (!selectedPayment || selectedInvoices.length === 0) {
             return;
         }
 
         if (invoicesTotal !== selectedPayment.amount) {
-            setError("Сумма счетов не совпадает с суммой платежа");
+            setError("root", { message: "Сумма счетов не совпадает с суммой платежа" });
             return;
         }
 
         if (!selectedInvoices.every(i => i.customerInn === selectedPayment.customerInn)) {
-            setError("ИНН заказчика не совпадает");
+            setError("root", { message: "ИНН заказчика не совпадает" });
             return;
         }
 
-        setError(null);
         onMatch(selectedPayment, selectedInvoices);
     };
 
     return (
-        <Stack spacing={1.5}>
+        <Stack component="form" spacing={1.5} noValidate onSubmit={handleSubmit(onSubmit)}>
             <div>
                 <Typography variant="body2">
                     Платёж: {selectedPayment ? `№${selectedPayment.id}, сумма ${selectedPayment.amount}` : "не выбран"}
@@ -47,11 +47,11 @@ export const MatchForm: React.FC<Props> = ({ selectedPayment, selectedInvoices, 
                     <Typography variant="body2">Сумма счетов: {invoicesTotal}</Typography>
                 )}
             </div>
-            {error && <Alert severity="error">{error}</Alert>}
+            {errors.root && <Alert severity="error">{errors.root.message}</Alert>}
             <Button
+                type="submit"
                 variant="contained"
                 color="primary"
-                onClick={handleMatch}
                 disabled={isSelectionIncomplete}
             >
                 СОПОСТАВИТЬ
