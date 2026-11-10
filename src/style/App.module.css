@@ -5,19 +5,20 @@
 }
 
 .container {
-  max-width: 1440px;
+  max-width: 1920px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 16px;
   display: flex;
-  gap: 32px;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.tables_block {
-  flex: 1;
-  min-width: 0;
+.match_bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
 }
-
-.match_block {
-  flex: 0 0 280px;
-}
-
