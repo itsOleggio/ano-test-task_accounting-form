@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { PaymentTable, InvoiceTable, MatchForm } from "../components/";
-import { mockPayments, mockInvoices } from "../constants";
+import { useRef, useState } from "react";
+import { PaymentTable, InvoiceTable, MatchForm, MatchConsole } from "../components/";
+import { mockPayments, mockInvoices, MATCH_LOG_LABEL } from "../constants";
 import type { Payment } from "../types/payment";
 import type { Invoice } from "../types/invoice";
+import type { MatchLogEntry } from "../types/matchLogEntry";
 import styles from "../style/App.module.css";
 import { Alert, Paper, Snackbar, Typography } from "@mui/material";
 
@@ -12,6 +13,8 @@ function App() {
   const [matchedPaymentIds, setMatchedPaymentIds] = useState<number[]>([]);
   const [matchedInvoiceIds, setMatchedInvoiceIds] = useState<number[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [matchLog, setMatchLog] = useState<MatchLogEntry[]>([]);
+  const nextLogEntryId = useRef(0);
 
   const selectedPayment = mockPayments.find((p) => p.id === selectedPaymentId) || null;
   const selectedInvoices = mockInvoices.filter((inv) => selectedInvoiceIds.includes(inv.id));
@@ -25,10 +28,17 @@ function App() {
   const handleMatch = (payment: Payment, invoices: Invoice[]) => {
     const invoiceIds = invoices.map((i) => i.id);
 
-    invoiceIds.forEach((invoiceId) => {
-      console.log("Сопоставление:", { invoiceId: String(invoiceId), paymentId: String(payment.id) });
+    const logEntries = invoiceIds.map((invoiceId) => ({
+      id: nextLogEntryId.current++,
+      invoiceId: String(invoiceId),
+      paymentId: String(payment.id),
+    }));
+
+    logEntries.forEach(({ invoiceId, paymentId }) => {
+      console.log(MATCH_LOG_LABEL, { invoiceId, paymentId });
     });
 
+    setMatchLog((prev) => [...prev, ...logEntries]);
     setMatchedPaymentIds((prev) => [...prev, payment.id]);
     setMatchedInvoiceIds((prev) => [...prev, ...invoiceIds]);
     setSelectedPaymentId(null);
@@ -66,6 +76,7 @@ function App() {
           selectedInvoices={selectedInvoices}
           onMatch={handleMatch}
         />
+        <MatchConsole entries={matchLog} onClear={() => setMatchLog([])} />
       </Paper>
 
       <Snackbar

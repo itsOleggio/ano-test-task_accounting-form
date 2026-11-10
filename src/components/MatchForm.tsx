@@ -76,7 +76,7 @@ export const MatchForm: React.FC<Props> = ({ selectedPayment, selectedInvoices, 
         variant="contained"
         color="primary"
         disabled={isSelectionIncomplete}
-        sx={{ flexShrink: 0 }}
+        sx={{ flexShrink: 0, marginLeft: "auto" }}
       >
         СОПОСТАВИТЬ
       </Button>
