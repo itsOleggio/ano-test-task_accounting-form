@@ -1,5 +1,6 @@
 :root {
   box-sizing: border-box;
+  scroll-padding-bottom: 120px;
   margin: 0;
   padding: 0;
 
