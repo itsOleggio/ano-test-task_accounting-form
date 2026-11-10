@@ -4,11 +4,14 @@ import { mockPayments, mockInvoices } from "../constants";
 import type { Payment } from "../types/payment";
 import type { Invoice } from "../types/invoice";
 import styles from "../style/App.module.css";
-import { Paper, Typography } from "@mui/material";
+import { Alert, Paper, Snackbar, Typography } from "@mui/material";
 
 function App() {
     const [selectedPaymentId, setSelectedPaymentId] = React.useState<number | null>(null);
     const [selectedInvoiceIds, setSelectedInvoiceIds] = React.useState<number[]>([]);
+    const [matchedPaymentIds, setMatchedPaymentIds] = React.useState<number[]>([]);
+    const [matchedInvoiceIds, setMatchedInvoiceIds] = React.useState<number[]>([]);
+    const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
 
     const selectedPayment = mockPayments.find((p) => p.id === selectedPaymentId) || null;
     const selectedInvoices = mockInvoices.filter((inv) => selectedInvoiceIds.includes(inv.id));
@@ -20,8 +23,17 @@ function App() {
     };
 
     const handleMatch = (payment: Payment, invoices: Invoice[]) => {
-        console.log("Сопоставление выполнено:", { payment, invoices });
-        alert(`Успешное сопоставление: платеж #${payment.id} со счетами ${invoices.map((i) => i.id).join(", ")}`);
+        const invoiceIds = invoices.map((i) => i.id);
+
+        invoiceIds.forEach((invoiceId) => {
+            console.log("Сопоставление:", { invoiceId: String(invoiceId), paymentId: String(payment.id) });
+        });
+
+        setMatchedPaymentIds((prev) => [...prev, payment.id]);
+        setMatchedInvoiceIds((prev) => [...prev, ...invoiceIds]);
+        setSelectedPaymentId(null);
+        setSelectedInvoiceIds([]);
+        setSuccessMessage(`Успешное сопоставление: платеж #${payment.id} со счетами ${invoiceIds.join(", ")}`);
     };
 
     return (
@@ -34,6 +46,7 @@ function App() {
                     <PaymentTable
                         payments={mockPayments}
                         selectedPaymentId={selectedPaymentId}
+                        matchedPaymentIds={matchedPaymentIds}
                         onSelectPayment={setSelectedPaymentId}
                     />
                 </Paper>
@@ -45,6 +58,7 @@ function App() {
                     <InvoiceTable
                         invoices={mockInvoices}
                         selectedInvoiceIds={selectedInvoiceIds}
+                        matchedInvoiceIds={matchedInvoiceIds}
                         onToggleInvoice={handleToggleInvoice}
                     />
                 </Paper>
@@ -56,12 +70,21 @@ function App() {
                         Сопоставление
                     </Typography>
                     <MatchForm
+                        key={`${selectedPaymentId}:${selectedInvoiceIds.join(",")}`}
                         selectedPayment={selectedPayment}
                         selectedInvoices={selectedInvoices}
                         onMatch={handleMatch}
                     />
                 </Paper>
             </div>
+
+            <Snackbar
+                open={successMessage !== null}
+                autoHideDuration={4000}
+                onClose={() => setSuccessMessage(null)}
+            >
+                <Alert severity="success">{successMessage}</Alert>
+            </Snackbar>
         </div>
     );
 }

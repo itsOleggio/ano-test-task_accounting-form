@@ -12,3 +12,12 @@
   gap: 32px;
 }
 
+.tables_block {
+  flex: 1;
+  min-width: 0;
+}
+
+.match_block {
+  flex: 0 0 280px;
+}
+
