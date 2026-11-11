@@ -39,7 +39,7 @@ npm run dev
 | Команда | Описание |
 |---|---|
 | `npm run dev` | Запуск в режиме разработки |
-| `npm run build` | Проверка типов и сборка |
+| `npm run build` | Проверка типов и сборка в папку `docs` |
 | `npm run preview` | Просмотр собранной версии |
 | `npm run lint` | Проверка кода линтером |
 
@@ -57,6 +57,9 @@ npm run dev
 ## Структура проекта
 ```bash
 ├── index.html
+├── docs // Собранная версия для GitHub Pages
+├── public
+│   └── .nojekyll // Отключает обработку Jekyll на GitHub Pages
 └── src
     ├── app
     │   ├── App.tsx // Главная страница
@@ -89,4 +92,14 @@ npm run dev
 
 ## GitHub Pages
 
-TBD
+Сайт: https://itsoleggio.github.io/ano-test-task_accounting-form/
+
+Собранная версия лежит в папке `docs` и публикуется из ветки `main`.
+Чтобы обновить сайт, пересоберите проект и закоммитьте папку `docs`:
+
+```bash
+npm run build
+git add docs
+git commit -m "build(pages): обновил сборку"
+git push origin main
+```
