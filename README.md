@@ -90,16 +90,3 @@ npm run dev
 
 ---
 
-## GitHub Pages
-
-Сайт: https://itsoleggio.github.io/ano-test-task_accounting-form/
-
-Собранная версия лежит в папке `docs` и публикуется из ветки `main`.
-Чтобы обновить сайт, пересоберите проект и закоммитьте папку `docs`:
-
-```bash
-npm run build
-git add docs
-git commit -m "build(pages): обновил сборку"
-git push origin main
-```
