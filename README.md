@@ -88,5 +88,4 @@ npm run dev
         └── matchLogEntry.ts // Тип записи консоли
 ```
 
----
 
